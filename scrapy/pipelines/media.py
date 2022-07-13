@@ -1,3 +1,9 @@
+"""
+There are two sections in the _process_requst function that have been commented out in order to prevent the caching of
+image data and to allow downloading the same image multiple times.
+Link to solution: https://stackoverflow.com/questions/45177367/allow-duplicate-downloads-with-scrapy-image-pipeline
+"""
+
 import functools
 import logging
 from collections import defaultdict
@@ -96,17 +102,23 @@ class MediaPipeline:
         request.callback = None
         request.errback = None
 
+        """
+        +++ THIS IS THE CHANGE THAT WAS MADE TO THE FILE. THE BELOW TWO LINES WERE COMMENTED OUT +++
+        """
         # Return cached result if request was already seen
-        if fp in info.downloaded:
-            return defer_result(info.downloaded[fp]).addCallbacks(cb, eb)
+        # if fp in info.downloaded:
+        #     return defer_result(info.downloaded[fp]).addCallbacks(cb, eb)
 
         # Otherwise, wait for result
         wad = Deferred().addCallbacks(cb, eb)
         info.waiting[fp].append(wad)
 
+        """
+        +++ THIS IS THE CHANGE THAT WAS MADE TO THE FILE. THE BELOW TWO LINES WERE COMMENTED OUT +++
+        """
         # Check if request is downloading right now to avoid doing it twice
-        if fp in info.downloading:
-            return wad
+        # if fp in info.downloading:
+        #     return wad
 
         # Download request checking media_to_download hook output first
         info.downloading.add(fp)
